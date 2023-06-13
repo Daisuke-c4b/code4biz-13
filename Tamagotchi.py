@@ -1,7 +1,10 @@
+import PySimpleGUI as sg
+import os
 import textwrap
 
 
 class Tamagotchi:
+    
     def __init__(self, name):
         self.name = name
         self.age = 0
@@ -156,5 +159,77 @@ def main():
         print("-" * 50)
 
 
+def gui():
+    sg.theme("Dark Blue15")
+    # GUI layout を定義します
+    # GUI layout を定義します
+    layout = [
+        [sg.Image(filename="", key="-IMAGE-")],
+        [
+            sg.Text(
+                size=(30, 1), key="-NAME-", font=("Helvetica", 25), text_color="blue"
+            )
+        ],
+        [
+            sg.Text("時間経過:", size=(10, 1)),
+            sg.Input(default_text="1", size=(5, 1), key="-HOURS-"),
+            sg.Button("時間経過"),
+        ],
+        [sg.Button("食べる"), sg.Button("眠る"), sg.Button("遊ぶ")],
+        [
+            sg.Text(
+                size=(40, 6), key="-STATUS-", font=("Helvetica", 20), text_color="red"
+            )
+        ],
+        [sg.Button("ステータス確認"), sg.Button("閉じる")],
+        [sg.Output(size=(80, 20))],
+    ]
+
+    # ウィンドウを作成します
+    window = sg.Window("たまごっち", layout)
+
+    # インスタンスを作成します
+    tama = Tamagotchi("たまごっち")
+
+    while True:
+        # イベントを読み込みます
+        event, values = window.read()
+
+        # 閉じるボタンが押された場合、またはウィンドウが閉じられた場合、終了します
+        if event == sg.WINDOW_CLOSED or event == "閉じる":
+            break
+
+        # 各ボタンに応じて、対応するたまごっちのアクションを実行します
+        elif event == "食べる":
+            tama.eat()
+        elif event == "眠る":
+            tama.sleep()
+        elif event == "遊ぶ":
+            tama.play()
+        elif event == "時間経過":
+            hour = int(values["-HOURS-"])
+            tama.update_time(hour)
+
+        # ステータス確認ボタンが押されたとき、ステータスを更新します
+        elif event == "ステータス確認":
+            window["-STATUS-"].update(str(tama))
+
+        # たまごっちの名前と画像を更新します
+        window["-NAME-"].update(tama.name)
+        window["-IMAGE-"].update(filename=os.path.join("キャラクター", f"{tama.name}.png"))
+
+    # ウィンドウを閉じます
+    window.close()
+
+
+# ユーザーがコマンドラインで "python3 this_file.py console" と入力するとテキストベースのインタラクションが起動します
+# ユーザーが "python3 this_file.py gui" と入力すると GUI ベースのインタラクションが起動します
 if __name__ == "__main__":
-    main()
+    import sys
+
+    if len(sys.argv) > 1 and sys.argv[1] == "console":
+        main()
+    elif len(sys.argv) > 1 and sys.argv[1] == "gui":
+        gui()
+    else:
+        print("Usage: python3 Tamagotchi.py [console|gui]")
