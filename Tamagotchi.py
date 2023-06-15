@@ -55,8 +55,10 @@ class Tamagotchi:
     def check_game_over(self):
         if self.hunger <= 0 or self.happiness <= 0:
             print(f"{self.name}は餓死してしまいました。ゲームオーバー")
-            exit(0)
+            self.__init__(self.name)
+            # exit(0)
 
+    # 進化チェック
     def check_growth(self):
         current_name = self.name
         new_name = self.name
@@ -69,18 +71,25 @@ class Tamagotchi:
             if self.hunger >= 30 and self.happiness >= 30:
                 new_name = "たまっち"
             else:
-                new_name = "くちたっち"
+                new_name = "くちたまっち"
         elif self.age >= 2 and self.hunger >= 1 and self.happiness >= 1:
             new_name = "まるっち"
+        elif self.age >= 1:
+            new_name = "べびっち"
+        elif self.age >= 0:
+            new_name = "たまご"
 
-        if current_name != new_name:
+        if new_name == "たまご":
             self.name = new_name
-            print(f"{self.name}に進化しました")
+            print("ようこそたまごっちゲームへ！！\nたまごを孵化させるために、まずは1時間経過のボタンを押してみてね😊")
+
+        elif current_name != new_name:
+            self.name = new_name
+            print(f"おめでとう！{self.name}に進化しました！")
 
     def __str__(self):
         self.status = textwrap.dedent(
-            f"""名前:{self.name}\n年齢:{self.age}\n満腹度:{self.hunger}\n幸福度:{self.happiness}\n体重:{self.weight}\n{'-' * 50}
-    """
+            f"""名前:{self.name}\n年齢:{self.age}\n満腹度:{self.hunger}\n幸福度:{self.happiness}\n体重:{self.weight}"""
         )
         return self.status
 
@@ -118,14 +127,14 @@ class Adult(Tamagotchi):
 
     def __str__(self):
         self.status = textwrap.dedent(
-            f"""名前:{self.name}\n年齢:{self.age}\n満腹度:{self.hunger}\n幸福度:{self.happiness}\n体重:{self.weight}\n酔度{self.drunkness}\n{'-' * 50}
-    """
+            f"""名前:{self.name}\n年齢:{self.age}\n満腹度:{self.hunger}\n幸福度:{self.happiness}\n体重:{self.weight}\n酔度{self.drunkness}"""
         )
         return self.status
 
 
 def main():
     tama = Tamagotchi("たまごっち")
+
     print(tama)
 
     # ユーザーインタラクションを追加
@@ -161,28 +170,24 @@ def main():
 
 def gui():
     sg.theme("Dark Blue15")
-    # GUI layout を定義します
+
     # GUI layout を定義します
     layout = [
-        [sg.Image(filename="", key="-IMAGE-")],
+
+        [sg.Image(filename=os.path.join("キャラクター", "たまごっち.png"), key="-IMAGE-")],
+
+        [sg.Button("食べる", size=(8, 1)), sg.Button("眠る", size=(8, 1)), sg.Button("遊ぶ", size=(8, 1)),sg.Text(" "),
+         sg.Text("時間経過:", size=(8, 1)),
+         sg.Input(default_text="1", size=(5, 1), key="-HOURS-"),
+         sg.Button("時間経過"),
+        ],
         [
             sg.Text(
-                size=(30, 1), key="-NAME-", font=("Helvetica", 25), text_color="blue"
+                "ようこそたまごっちゲームへ！！\n"
+                "まずは1時間経過のボタンを押してみてね😊", size=(40, 5), key="-STATUS-", font=("Helvetica", 20), text_color="red"
             )
         ],
-        [
-            sg.Text("時間経過:", size=(10, 1)),
-            sg.Input(default_text="1", size=(5, 1), key="-HOURS-"),
-            sg.Button("時間経過"),
-        ],
-        [sg.Button("食べる"), sg.Button("眠る"), sg.Button("遊ぶ")],
-        [
-            sg.Text(
-                size=(40, 6), key="-STATUS-", font=("Helvetica", 20), text_color="red"
-            )
-        ],
-        [sg.Button("ステータス確認"), sg.Button("閉じる")],
-        [sg.Output(size=(80, 20))],
+        [sg.Output(size=(95, 10))],
     ]
 
     # ウィンドウを作成します
@@ -190,6 +195,8 @@ def gui():
 
     # インスタンスを作成します
     tama = Tamagotchi("たまごっち")
+
+
 
     while True:
         # イベントを読み込みます
@@ -210,12 +217,10 @@ def gui():
             hour = int(values["-HOURS-"])
             tama.update_time(hour)
 
-        # ステータス確認ボタンが押されたとき、ステータスを更新します
-        elif event == "ステータス確認":
-            window["-STATUS-"].update(str(tama))
+        # ステータスを更新します
+        window["-STATUS-"].update(str(tama))
 
         # たまごっちの名前と画像を更新します
-        window["-NAME-"].update(tama.name)
         window["-IMAGE-"].update(filename=os.path.join("キャラクター", f"{tama.name}.png"))
 
     # ウィンドウを閉じます
