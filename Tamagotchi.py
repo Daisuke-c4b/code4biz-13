@@ -72,16 +72,16 @@ class Tamagotchi:
                 new_name = "たまっち"
             else:
                 new_name = "くちたまっち"
-        elif self.age >= 2 and self.hunger >= 1 and self.happiness >= 1:
+        elif self.age >= 3 and self.hunger >= 1 and self.happiness >= 1:
             new_name = "まるっち"
-        elif self.age >= 1:
+        elif self.age >= 2:
             new_name = "べびっち"
         elif self.age >= 0:
             new_name = "たまご"
 
         if new_name == "たまご":
             self.name = new_name
-            print("ようこそたまごっちゲームへ！！\nたまごを孵化させるために、まずは1時間経過のボタンを押してみてね😊")
+            print("ようこそたまごっちゲームへ！！\nたまごを孵化させるために、まずは時間経過のボタンを押してみてね😊")
 
         elif current_name != new_name:
             self.name = new_name
@@ -183,8 +183,10 @@ def gui():
         ],
         [
             sg.Text(
-                "ようこそたまごっちゲームへ！！\n"
-                "まずは1時間経過のボタンを押してみてね😊", size=(40, 5), key="-STATUS-", font=("Helvetica", 20), text_color="red"
+                "たまごっちゲームへようこそ！！\n"
+                "初代たまごっちのキャラクターは全部で11種類\n"
+                "「おやじっち」を目指して頑張って育ててあげよう！\n"
+                "まずは時間経過のボタンを押してみてね😊", size=(40, 5), key="-STATUS-", font=("Helvetica", 20), text_color="red"
             )
         ],
         [sg.Output(size=(95, 10))],
